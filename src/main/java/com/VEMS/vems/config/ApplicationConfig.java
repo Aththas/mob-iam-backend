@@ -1,6 +1,6 @@
 package com.VEMS.vems.config;
 
-import com.VEMS.vems.auth.repository.UserRepository;
+import com.VEMS.vems.auth.repository.AuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,10 +17,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
-    private final UserRepository userRepository;
+    private final AuthRepository authRepository;
     @Bean
     public UserDetailsService userDetailsService(){
-        return username -> userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+        return username -> authRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
     }
 
     @Bean
