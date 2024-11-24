@@ -4,6 +4,7 @@ import com.VEMS.vems.auth.dto.requestDto.AuthDto;
 import com.VEMS.vems.auth.dto.requestDto.SignInDto;
 import com.VEMS.vems.auth.dto.responseDto.AuthResponseDto;
 import com.VEMS.vems.auth.service.AuthService;
+import com.VEMS.vems.other.apiResponseDto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,12 +20,12 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signIn")
-    public ResponseEntity<?> signIn(@RequestBody SignInDto signInDto){
+    public ResponseEntity<ApiResponse<?>> signIn(@RequestBody SignInDto signInDto){
         return authService.signIn(signInDto);
     }
 
     @PostMapping("/authentication")
-    public ResponseEntity<?> authentication(@RequestBody AuthDto authDto){
+    public ResponseEntity<ApiResponse<?>> authentication(@RequestBody AuthDto authDto){
         return authService.authentication(authDto);
     }
 }
