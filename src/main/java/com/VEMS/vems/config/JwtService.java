@@ -1,10 +1,13 @@
 package com.VEMS.vems.config;
 
+import com.VEMS.vems.auth.entity.token.Token;
+import com.VEMS.vems.auth.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -13,10 +16,14 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
+
+    private final TokenRepository tokenRepository;
 
     @Value("${spring.application.security.jwt.secret-key}")
     private String secretKey;
@@ -78,5 +85,10 @@ public class JwtService {
 
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
+    }
+
+    public boolean isTokenValid(String token) {
+        Optional<Token> optionalToken = tokenRepository.findByToken(token);
+        return optionalToken.isPresent();
     }
 }

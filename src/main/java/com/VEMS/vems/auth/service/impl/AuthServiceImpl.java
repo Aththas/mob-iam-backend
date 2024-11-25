@@ -176,7 +176,7 @@ public class AuthServiceImpl implements AuthService {
 
             authMapper.removeToken(user.getId());
 
-            final String accessToken = jwtService.generateToken(user);
+            final String accessToken = jwtService.generateRefreshToken(user);
 
             authMapper.saveToken(accessToken, user);
 
