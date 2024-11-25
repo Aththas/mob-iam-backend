@@ -8,6 +8,7 @@ import com.VEMS.vems.auth.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,6 +37,7 @@ public class AuthMapper {
         tokenRepository.save(token);
     }
 
+    @Transactional
     public void removeToken(Long userId){
         List<Token> tokenList = tokenRepository.findAllByUserId(userId);
         if(!tokenList.isEmpty()){

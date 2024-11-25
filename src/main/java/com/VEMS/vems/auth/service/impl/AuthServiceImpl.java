@@ -14,7 +14,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -27,7 +31,11 @@ public class AuthServiceImpl implements AuthService {
     private final AuthMapper authMapper;
     private final JwtService jwtService;
     private final ObjectValidator<SignInDto> signInDtoObjectValidator;
+    private final AuthenticationManager authenticationManager;
+    private final ObjectValidator<AuthDto> authDtoObjectValidator;
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse<?>> signIn(SignInDto signInDto) {
         if(signInDto == null){
             log.error("sign in: null object");
@@ -67,14 +75,67 @@ public class AuthServiceImpl implements AuthService {
         }catch (Exception e){
             log.error("sign in: " + e);
             return new ResponseEntity<>(
-                    new ApiResponse<>(false, null, "SERVER ERROR", "500"),
+                    new ApiResponse<>(false, null, "Server Error", "500"),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
     public ResponseEntity<ApiResponse<?>> authentication(AuthDto authDto) {
-        return null;
-    }
+        if(authDto == null){
+            log.error("Auth: null object");
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, null, "null object", "400"),
+                    HttpStatus.OK);
+        }
 
+        authDtoObjectValidator.validate(authDto);
+
+        Optional<User> optionalUser = authRepository.findByEmail(authDto.getEmail());
+        if(optionalUser.isEmpty()){
+            log.error("Auth: User Not Found");
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, null, "Authentication Failure", "404"),
+                    HttpStatus.OK);
+        }
+
+        try{
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authDto.getEmail(),
+                            authDto.getPassword()
+                    )
+            );
+
+            User user = optionalUser.get();
+
+            authMapper.removeToken(user.getId());
+
+            final String accessToken = jwtService.generateToken(user);
+            final String refreshToken = jwtService.generateRefreshToken(user);
+
+            authMapper.saveToken(accessToken, user);
+
+            AuthResponseDto authResponseDto = new AuthResponseDto();
+            authResponseDto.setAccessToken(accessToken);
+            authResponseDto.setRefreshToken(refreshToken);
+
+            log.info("Auth: User Logged In " + user.getEmail());
+            return new ResponseEntity<>(
+                    new ApiResponse<>(true, authResponseDto, "Logged Success", null),
+                    HttpStatus.OK);
+
+        }catch (BadCredentialsException e){
+            log.error("Authentication: " + e);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, null, "Authentication Failure", "401"),
+                    HttpStatus.OK);
+
+        }catch (Exception e){
+            log.error("Authentication: " + e);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, null, "Server Error", "500"),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
