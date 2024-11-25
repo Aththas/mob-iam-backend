@@ -10,6 +10,8 @@ import com.VEMS.vems.config.JwtService;
 import com.VEMS.vems.other.apiResponseDto.ApiResponse;
 import com.VEMS.vems.other.mapper.AuthMapper;
 import com.VEMS.vems.other.validator.ObjectValidator;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -81,6 +83,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse<?>> authentication(AuthDto authDto) {
         if(authDto == null){
             log.error("Auth: null object");
@@ -138,4 +141,60 @@ public class AuthServiceImpl implements AuthService {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<ApiResponse<?>> refreshToken(HttpServletRequest request) {
+        try{
+            final String authHeader = request.getHeader("Authorization");
+            if(authHeader == null || !authHeader.startsWith("Bearer ")){
+                log.error("refresh token: Invalid Refresh Token Type");
+                return new ResponseEntity<>(
+                        new ApiResponse<>(false, null, "Invalid Refresh Token Type", "404"),
+                        HttpStatus.OK);
+            }
+
+            final String jwt = authHeader.substring(7);
+            final String userEmail = jwtService.extractUsername(jwt);
+
+            Optional<User> optionalUser = authRepository.findByEmail(userEmail);
+            if(optionalUser.isEmpty()){
+                log.error("refresh token: User Not Found");
+                return new ResponseEntity<>(
+                        new ApiResponse<>(false, null, "Invalid Refresh Token", "404"),
+                        HttpStatus.OK);
+            }
+
+            if(jwtService.isTokenExpired(jwt)){
+                log.error("refresh token: Refresh Token Expired");
+                return new ResponseEntity<>(
+                        new ApiResponse<>(false, null, "Invalid Refresh Token", "404"),
+                        HttpStatus.OK);
+            }
+
+            User user = optionalUser.get();
+
+            authMapper.removeToken(user.getId());
+
+            final String accessToken = jwtService.generateToken(user);
+
+            authMapper.saveToken(accessToken, user);
+
+            AuthResponseDto authResponseDto = new AuthResponseDto();
+            authResponseDto.setAccessToken(accessToken);
+            authResponseDto.setRefreshToken(jwt);
+
+            log.info("Refresh token: Refresh Token Generated");
+            return new ResponseEntity<>(
+                    new ApiResponse<>(true, authResponseDto, "Refresh Token Generated", null),
+                    HttpStatus.OK);
+
+        }catch (Exception e){
+            log.error("Refresh Token: " + e);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, null, "Server Error", "500"),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

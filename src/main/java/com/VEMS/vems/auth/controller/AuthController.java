@@ -2,9 +2,10 @@ package com.VEMS.vems.auth.controller;
 
 import com.VEMS.vems.auth.dto.requestDto.AuthDto;
 import com.VEMS.vems.auth.dto.requestDto.SignInDto;
-import com.VEMS.vems.auth.dto.responseDto.AuthResponseDto;
 import com.VEMS.vems.auth.service.AuthService;
 import com.VEMS.vems.other.apiResponseDto.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,5 +28,10 @@ public class AuthController {
     @PostMapping("/authentication")
     public ResponseEntity<ApiResponse<?>> authentication(@RequestBody AuthDto authDto){
         return authService.authentication(authDto);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<?>> refresh(HttpServletRequest request){
+        return authService.refreshToken(request);
     }
 }
