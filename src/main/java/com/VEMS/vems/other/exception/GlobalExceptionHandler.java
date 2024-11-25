@@ -12,9 +12,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
     @ExceptionHandler(ObjectNotValidException.class)
     public ResponseEntity<ApiResponse<?>> handleObjectNotValidException(ObjectNotValidException e){
-        log.error("Empty or Null Object Value is Found: "+ e.getErrorMsg().toString());
+        log.error("Empty or Null Object Value is Found: "+ e.getErrorMsg());
         return new ResponseEntity<>(
                 new ApiResponse<>(false, null, e.getErrorMsg().toString(), "400"),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserNotAuthenticated.class)
+    public ResponseEntity<ApiResponse<?>> handleUserNotAuthenticated(UserNotAuthenticated e){
+        log.error(e.getErrorMsg());
+        return new ResponseEntity<>(
+                new ApiResponse<>(false, null, e.getErrorMsg(), "400"),
                 HttpStatus.BAD_REQUEST);
     }
 }

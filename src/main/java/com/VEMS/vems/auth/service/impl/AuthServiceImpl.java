@@ -11,7 +11,6 @@ import com.VEMS.vems.other.apiResponseDto.ApiResponse;
 import com.VEMS.vems.other.mapper.AuthMapper;
 import com.VEMS.vems.other.validator.ObjectValidator;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -125,7 +124,7 @@ public class AuthServiceImpl implements AuthService {
 
             log.info("Auth: User Logged In " + user.getEmail());
             return new ResponseEntity<>(
-                    new ApiResponse<>(true, authResponseDto, "Logged Success", null),
+                    new ApiResponse<>(true, authResponseDto, user.getRole().toString(), null),
                     HttpStatus.OK);
 
         }catch (BadCredentialsException e){
