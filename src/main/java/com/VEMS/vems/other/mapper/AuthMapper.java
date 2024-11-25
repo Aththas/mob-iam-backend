@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Component
@@ -42,6 +43,14 @@ public class AuthMapper {
         List<Token> tokenList = tokenRepository.findAllByUserId(userId);
         if(!tokenList.isEmpty()){
             tokenRepository.deleteAllByUserId(userId);
+        }
+    }
+
+    @Transactional
+    public void removeTokenByToken(String token){
+        Optional<Token> optionalToken = tokenRepository.findByToken(token);
+        if(optionalToken.isPresent()){
+            tokenRepository.deleteByToken(token);
         }
     }
 }
