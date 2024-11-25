@@ -1,6 +1,7 @@
 package com.VEMS.vems.auth.entity.user;
 
 import com.VEMS.vems.auth.entity.token.Token;
+import com.VEMS.vems.entity.VisitorEntryRequest;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,8 @@ public class User implements UserDetails {
     private Long id;
     private String firstName;
     private String lastName;
+    private String designation;
+    private Long contact;
     private String email;
     private String password;
 
@@ -31,6 +34,11 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     @JsonManagedReference
     private List<Token> tokens;
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    private List<VisitorEntryRequest> visitorEntryRequests;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return role.getAuthorities();

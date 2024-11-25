@@ -2,6 +2,7 @@ package com.VEMS.vems.auth.dto.requestDto;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 @Data
@@ -14,6 +15,14 @@ public class SignInDto {
     @NotEmpty(message = "Lastname is Mandatory")
     @NotNull(message = "Lastname is Mandatory")
     private String lastName;
+
+    @NotEmpty(message = "Designation is Mandatory")
+    @NotNull(message = "Designation is Mandatory")
+    private String designation;
+
+    @Positive(message = "Invalid Contact")
+    @NotNull(message = "Contact is Mandatory")
+    private Long contact;
 
     @NotEmpty(message = "Email is Mandatory")
     @NotNull(message = "Email is Mandatory")

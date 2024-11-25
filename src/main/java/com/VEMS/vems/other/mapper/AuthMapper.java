@@ -28,6 +28,8 @@ public class AuthMapper {
         user.setEmail(signInDto.getEmail());
         user.setRole(Role.valueOf(signInDto.getRole()));
         user.setPassword(passwordEncoder.encode(signInDto.getPassword()));
+        user.setDesignation(signInDto.getDesignation());
+        user.setContact(signInDto.getContact());
         return user;
     }
 

@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private User getCurrentUser(){
+    public User getCurrentUser(){
         Optional<User> optionalUser = authRepository.findByEmail(getCurrentUserName());
         if(optionalUser.isPresent()){
             return optionalUser.get();
