@@ -3,6 +3,7 @@ package com.VEMS.vems.other.mapper;
 import com.VEMS.vems.auth.entity.user.User;
 import com.VEMS.vems.dto.requestDto.AddVisitorDto;
 import com.VEMS.vems.dto.requestDto.AddVisitorEntryRequestDto;
+import com.VEMS.vems.dto.responseDto.ViewVisitorEntryRequestDto;
 import com.VEMS.vems.entity.Visitor;
 import com.VEMS.vems.entity.VisitorEntryRequest;
 import org.springframework.stereotype.Component;
@@ -32,5 +33,18 @@ public class VisitorMapper {
         visitorEntryRequest.setVisitor(visitor);
         visitorEntryRequest.setPermission("pending");
         return visitorEntryRequest;
+    }
+
+    public ViewVisitorEntryRequestDto mapViewVisitorEntryRequest(VisitorEntryRequest visitorEntryRequest) {
+        ViewVisitorEntryRequestDto viewVisitorEntryRequestDto = new ViewVisitorEntryRequestDto();
+        viewVisitorEntryRequestDto.setId(visitorEntryRequest.getId());
+        viewVisitorEntryRequestDto.setDepartment(visitorEntryRequest.getDepartment());
+        viewVisitorEntryRequestDto.setStartDate(visitorEntryRequest.getStartDate());
+        viewVisitorEntryRequestDto.setEndDate(visitorEntryRequest.getEndDate());
+        viewVisitorEntryRequestDto.setNightStay(visitorEntryRequest.getNightStay());
+        viewVisitorEntryRequestDto.setUser(visitorEntryRequest.getUser());
+        viewVisitorEntryRequestDto.setVisitor(visitorEntryRequest.getVisitor());
+        viewVisitorEntryRequestDto.setPermission(visitorEntryRequest.getPermission());
+        return viewVisitorEntryRequestDto;
     }
 }

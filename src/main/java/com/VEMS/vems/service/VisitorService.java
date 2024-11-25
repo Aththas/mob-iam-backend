@@ -6,4 +6,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface VisitorService {
     ResponseEntity<ApiResponse<?>> addVisitorRequest(ParentVisitorDto parentVisitorDto);
+
+    ResponseEntity<ApiResponse<?>> viewVisitorEntryRequestByUser(int page, int size, String sortBy, boolean ascending);
 }
