@@ -206,6 +206,27 @@ public class VisitorServiceImpl implements VisitorService {
     }
 
     @Override
+    public ResponseEntity<ApiResponse<?>> viewNotPendingVisitorEntryRequest(int page, int size, String sortBy, boolean ascending) {
+        try{
+            Pageable pageable = paginationConfig.getPageable(page, size, sortBy, ascending);
+
+            return viewVisitorEntryRequestByPermissionNot(pageable, "pending");
+        }catch (Exception e){
+            log.error("Entry Request By Permission: " + e);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, null, "Server Error", "500"),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private ResponseEntity<ApiResponse<?>> viewVisitorEntryRequestByPermissionNot(Pageable pageable, String permission) {
+        Page<VisitorEntryRequest> visitorEntryRequestsByPermissionNot =
+                visitorEntryRequestRepository.findAllByPermissionNot(permission, pageable);
+
+        return displayVisitorEntryRequests(visitorEntryRequestsByPermissionNot);
+    }
+
+    @Override
     public ResponseEntity<ApiResponse<?>> acceptVisitorRequestPermission(Long id) {
         try{
             return updateVisitorRequestPermission("accept",id);
@@ -245,7 +266,9 @@ public class VisitorServiceImpl implements VisitorService {
 
             log.info("update visitor entry request permission: pending to " + newPermission);
             return new ResponseEntity<>(
-                    new ApiResponse<>(true, null, "Permission Updated", null),
+                    new ApiResponse<>(true, null,
+                            "Permission " + newPermission + "ed for entry request " +visitorEntryRequest.getVisitor().getName(),
+                            null),
                     HttpStatus.OK);
         }else{
             log.error("update visitor entry request permission: Already Updated");

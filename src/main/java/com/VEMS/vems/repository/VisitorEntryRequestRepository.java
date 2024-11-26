@@ -16,4 +16,5 @@ public interface VisitorEntryRequestRepository extends JpaRepository<VisitorEntr
     Page<VisitorEntryRequest> findAllByUserId(Long userId, Pageable pageable);
 
     Page<VisitorEntryRequest> findAllByPermission(String permission, Pageable pageable);
+    Page<VisitorEntryRequest> findAllByPermissionNot(String permission, Pageable pageable);
 }
