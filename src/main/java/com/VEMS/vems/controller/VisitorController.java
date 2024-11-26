@@ -41,4 +41,14 @@ public class VisitorController {
                                                                          @RequestParam boolean ascending){
         return visitorService.viewAcceptVisitorEntryRequest(page, size, sortBy, ascending);
     }
+
+    @PostMapping("/acceptVisitorRequestPermission")
+    public ResponseEntity<ApiResponse<?>> acceptVisitorRequestPermission(@RequestParam Long id){
+        return visitorService.acceptVisitorRequestPermission(id);
+    }
+
+    @PostMapping("/rejectVisitorRequestPermission")
+    public ResponseEntity<ApiResponse<?>> rejectVisitorRequestPermission(@RequestParam Long id){
+        return visitorService.rejectVisitorRequestPermission(id);
+    }
 }

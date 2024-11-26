@@ -43,14 +43,7 @@ public class VisitorServiceImpl implements VisitorService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse<?>> addVisitorRequest(ParentVisitorDto parentVisitorDto) {
-
         User user = userServiceImpl.getCurrentUser();
-        if(user == null){
-            log.error("User Not Found");
-            return new ResponseEntity<>(
-                    new ApiResponse<>(false, null, "User Not Found", "404"),
-                    HttpStatus.OK);
-        }
 
         AddVisitorDto addVisitorDto = parentVisitorDto.getAddVisitorDto();
         AddVisitorEntryRequestDto addVisitorEntryRequestDto = parentVisitorDto.getAddVisitorEntryRequestDto();
@@ -142,13 +135,6 @@ public class VisitorServiceImpl implements VisitorService {
     @Override
     public ResponseEntity<ApiResponse<?>> viewVisitorEntryRequestByUser(int page, int size, String sortBy, boolean ascending) {
         User user = userServiceImpl.getCurrentUser();
-        if(user == null){
-            log.error("User Not Found");
-            return new ResponseEntity<>(
-                    new ApiResponse<>(false, null, "User Not Found", "404"),
-                    HttpStatus.OK);
-        }
-
         try{
             Pageable pageable = paginationConfig.getPageable(page, size, sortBy, ascending);
 
@@ -217,5 +203,55 @@ public class VisitorServiceImpl implements VisitorService {
                 visitorEntryRequestRepository.findAllByPermission(permission, pageable);
 
         return displayVisitorEntryRequests(visitorEntryRequestsByPermission);
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<?>> acceptVisitorRequestPermission(Long id) {
+        try{
+            return updateVisitorRequestPermission("accept",id);
+        }catch (Exception e){
+            log.error("accept visitor request permission: " + e);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, null, "Server Error", "500"),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<?>> rejectVisitorRequestPermission(Long id) {
+        try{
+            return updateVisitorRequestPermission("reject",id);
+        }catch (Exception e){
+            log.error("reject visitor request permission: " + e);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, null, "Server Error", "500"),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private ResponseEntity<ApiResponse<?>> updateVisitorRequestPermission(String newPermission, Long id) {
+
+        Optional<VisitorEntryRequest> optionalVisitorEntryRequest = visitorEntryRequestRepository.findById(id);
+        if(optionalVisitorEntryRequest.isEmpty()){
+            log.error("update visitor entry request permission: visitor entry request not found");
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, null, "Visitor Entry Request Not Found", "404"),
+                    HttpStatus.OK);
+        }
+        VisitorEntryRequest visitorEntryRequest = optionalVisitorEntryRequest.get();
+        if(visitorEntryRequest.getPermission().equals("pending")){
+            visitorEntryRequest.setPermission(newPermission);
+            visitorEntryRequestRepository.save(visitorEntryRequest);
+
+            log.info("update visitor entry request permission: pending to " + newPermission);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(true, null, "Permission Updated", null),
+                    HttpStatus.OK);
+        }else{
+            log.error("update visitor entry request permission: Already Updated");
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, null, "Already Updated", "409"),
+                    HttpStatus.OK);
+        }
     }
 }
