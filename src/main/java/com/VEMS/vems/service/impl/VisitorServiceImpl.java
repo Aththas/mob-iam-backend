@@ -86,8 +86,11 @@ public class VisitorServiceImpl implements VisitorService {
                     boolean alreadyHaveAccess = visitorEntryRequestList
                             .stream()
                             .anyMatch(visit ->
-                                    (addVisitorEntryRequestDto.getStartDate().isBefore(visit.getEndDate()) &&
-                                            addVisitorEntryRequestDto.getEndDate().isAfter(visit.getStartDate())));
+                                    (
+                                            !visit.getPermission().equals("reject") &&
+                                            addVisitorEntryRequestDto.getStartDate().isBefore(visit.getEndDate()) &&
+                                            addVisitorEntryRequestDto.getEndDate().isAfter(visit.getStartDate())
+                                    ));
 
                     if(alreadyHaveAccess){
                         final String msg = "The provided date range From " + addVisitorEntryRequestDto.getStartDate() + " To "
