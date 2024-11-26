@@ -27,4 +27,18 @@ public class VisitorController {
                                                              @RequestParam boolean ascending){
         return visitorService.viewVisitorEntryRequestByUser(page, size, sortBy, ascending);
     }
+
+    @GetMapping("/viewPendingVisitorEntryRequest")
+    public ResponseEntity<ApiResponse<?>> viewPendingVisitorEntryRequest(@RequestParam int page, @RequestParam int size,
+                                                                         @RequestParam String sortBy,
+                                                                         @RequestParam boolean ascending){
+        return visitorService.viewPendingVisitorEntryRequest(page, size, sortBy, ascending);
+    }
+
+    @GetMapping("/viewAcceptVisitorEntryRequest")
+    public ResponseEntity<ApiResponse<?>> viewAcceptVisitorEntryRequest(@RequestParam int page, @RequestParam int size,
+                                                                         @RequestParam String sortBy,
+                                                                         @RequestParam boolean ascending){
+        return visitorService.viewAcceptVisitorEntryRequest(page, size, sortBy, ascending);
+    }
 }

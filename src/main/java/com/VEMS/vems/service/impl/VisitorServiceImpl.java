@@ -9,6 +9,7 @@ import com.VEMS.vems.entity.Visitor;
 import com.VEMS.vems.entity.VisitorEntryRequest;
 import com.VEMS.vems.other.apiResponseDto.ApiResponse;
 import com.VEMS.vems.other.mapper.VisitorMapper;
+import com.VEMS.vems.other.pagination.PaginationConfig;
 import com.VEMS.vems.other.validator.ObjectValidator;
 import com.VEMS.vems.repository.VisitorEntryRequestRepository;
 import com.VEMS.vems.repository.VisitorRepository;
@@ -16,9 +17,7 @@ import com.VEMS.vems.service.VisitorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -39,6 +38,7 @@ public class VisitorServiceImpl implements VisitorService {
     private final VisitorMapper visitorMapper;
     private final VisitorEntryRequestRepository visitorEntryRequestRepository;
     private final UserServiceImpl userServiceImpl;
+    private final PaginationConfig paginationConfig;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -147,9 +147,7 @@ public class VisitorServiceImpl implements VisitorService {
         }
 
         try{
-            Sort sort = Sort.by(sortBy);
-            sort = ascending ? sort.ascending() : sort.descending();
-            Pageable pageable = PageRequest.of(page, size, sort);
+            Pageable pageable = paginationConfig.getPageable(page, size, sortBy, ascending);
 
             Page<VisitorEntryRequest> visitorEntryRequestPerPage =
                     visitorEntryRequestRepository.findAllByUserId(user.getId(), pageable);
@@ -180,5 +178,41 @@ public class VisitorServiceImpl implements VisitorService {
                         visitorEntryRequestPerPage.stream().map(visitorMapper::mapViewVisitorEntryRequest).toList(),
                         Long.toString(count), null),
                 HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<?>> viewPendingVisitorEntryRequest(int page, int size, String sortBy, boolean ascending) {
+        try{
+            Pageable pageable = paginationConfig.getPageable(page, size, sortBy, ascending);
+
+            return viewVisitorEntryRequestByPermission(pageable, "pending");
+        }catch (Exception e){
+            log.error("Entry Request By Permission: " + e);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, null, "Server Error", "500"),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<?>> viewAcceptVisitorEntryRequest(int page, int size, String sortBy, boolean ascending) {
+        try{
+            Pageable pageable = paginationConfig.getPageable(page, size, sortBy, ascending);
+
+            return viewVisitorEntryRequestByPermission(pageable, "accept");
+        }catch (Exception e){
+            log.error("Entry Request By Permission: " + e);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, null, "Server Error", "500"),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private ResponseEntity<ApiResponse<?>> viewVisitorEntryRequestByPermission(Pageable pageable, String permission) {
+        Page<VisitorEntryRequest> visitorEntryRequestsByPermission =
+                visitorEntryRequestRepository.findAllByPermission(permission, pageable);
+
+        return displayVisitorEntryRequests(visitorEntryRequestsByPermission);
     }
 }
