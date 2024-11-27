@@ -58,4 +58,9 @@ public class VisitorController {
     public ResponseEntity<ApiResponse<?>> rejectVisitorRequestPermission(@RequestParam Long id){
         return visitorService.rejectVisitorRequestPermission(id);
     }
+
+    @GetMapping("/viewVisitorEntryByNic")
+    public ResponseEntity<ApiResponse<?>> viewVisitorEntryByNic(@RequestParam String nic){
+        return visitorService.viewVisitorEntryByNic(nic);
+    }
 }

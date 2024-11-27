@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
@@ -275,6 +276,56 @@ public class VisitorServiceImpl implements VisitorService {
             return new ResponseEntity<>(
                     new ApiResponse<>(false, null, "Already Updated", "409"),
                     HttpStatus.OK);
+        }
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<?>> viewVisitorEntryByNic(String nic) {
+        try{
+            Optional<Visitor> optionalVisitor = visitorRepository.findByVerificationId(nic);
+            if(optionalVisitor.isEmpty()){
+                log.error("view visitor entry by NIC: Visitor Not Found");
+                return new ResponseEntity<>(
+                        new ApiResponse<>(false, null, "Visitor Not Found", "404"),
+                        HttpStatus.OK);
+            }
+            Visitor visitor = optionalVisitor.get();
+
+            List<VisitorEntryRequest> visitorEntryRequestList =
+                    visitorEntryRequestRepository.findAllByVisitorId(visitor.getId());
+
+            Optional<VisitorEntryRequest> optionalValidVisitorEntryRequest = visitorEntryRequestList
+                    .stream()
+                    .filter(
+                            request ->
+                                    request.getPermission().equals("accept") &&
+                                    !request.getStartDate().isAfter(LocalDate.now()) &&
+                                    !request.getEndDate().isBefore(LocalDate.now())
+                    )
+                    .findFirst();
+
+            if(optionalValidVisitorEntryRequest.isEmpty()){
+                String errorMsg = "No Entry Access for " + visitor.getName() + " for today";
+                log.error("view visitor entry by NIC: " + errorMsg);
+                return new ResponseEntity<>(
+                        new ApiResponse<>(false, null, errorMsg, "401"),
+                        HttpStatus.OK);
+            }
+
+            VisitorEntryRequest validVisitorEntryRequest = optionalValidVisitorEntryRequest.get();
+
+            String infoMsg = "Visitor " + validVisitorEntryRequest.getVisitor().getName() + " has access today";
+            log.info(infoMsg);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(true,
+                            visitorMapper.mapViewVisitorEntryRequest(validVisitorEntryRequest), infoMsg, null),
+                    HttpStatus.OK);
+
+        }catch (Exception e){
+            log.error("view visitor entry by NIC: " + e);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, null, "Server Error", "500"),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

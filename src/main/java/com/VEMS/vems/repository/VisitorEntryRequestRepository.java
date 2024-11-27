@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface VisitorEntryRequestRepository extends JpaRepository<VisitorEntryRequest, Long> {
@@ -17,4 +18,5 @@ public interface VisitorEntryRequestRepository extends JpaRepository<VisitorEntr
 
     Page<VisitorEntryRequest> findAllByPermission(String permission, Pageable pageable);
     Page<VisitorEntryRequest> findAllByPermissionNot(String permission, Pageable pageable);
+
 }

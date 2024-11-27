@@ -18,4 +18,6 @@ public interface VisitorService {
     ResponseEntity<ApiResponse<?>> rejectVisitorRequestPermission(Long id);
 
     ResponseEntity<ApiResponse<?>> viewNotPendingVisitorEntryRequest(int page, int size, String sortBy, boolean ascending);
+
+    ResponseEntity<ApiResponse<?>> viewVisitorEntryByNic(String nic);
 }
