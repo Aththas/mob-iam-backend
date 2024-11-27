@@ -3,6 +3,7 @@ package com.VEMS.vems.other.mapper;
 import com.VEMS.vems.auth.entity.user.User;
 import com.VEMS.vems.dto.requestDto.AddVisitorDto;
 import com.VEMS.vems.dto.requestDto.AddVisitorEntryRequestDto;
+import com.VEMS.vems.dto.responseDto.ViewVisitorEntryByNicDto;
 import com.VEMS.vems.dto.responseDto.ViewVisitorEntryRequestDto;
 import com.VEMS.vems.entity.Visitor;
 import com.VEMS.vems.entity.VisitorEntryRequest;
@@ -43,5 +44,15 @@ public class VisitorMapper {
         viewVisitorEntryRequestDto.setVisitor(visitorEntryRequest.getVisitor());
         viewVisitorEntryRequestDto.setPermission(visitorEntryRequest.getPermission());
         return viewVisitorEntryRequestDto;
+    }
+
+    public ViewVisitorEntryByNicDto mapViewVisitorEntryByNic(VisitorEntryRequest validVisitorEntryRequest, String inTime, String outTime, String vehicleNo, Long passNo) {
+        ViewVisitorEntryByNicDto viewVisitorEntryByNicDto = new ViewVisitorEntryByNicDto();
+        viewVisitorEntryByNicDto.setVisitorEntryRequest(validVisitorEntryRequest);
+        viewVisitorEntryByNicDto.setOutTime(outTime);
+        viewVisitorEntryByNicDto.setInTime(inTime);
+        viewVisitorEntryByNicDto.setPassNo(passNo);
+        viewVisitorEntryByNicDto.setVehicleNo(vehicleNo);
+        return viewVisitorEntryByNicDto;
     }
 }

@@ -35,10 +35,6 @@ public class User implements UserDetails {
     @JsonManagedReference
     private List<Token> tokens;
 
-    @OneToMany(mappedBy = "user")
-    @JsonManagedReference
-    private List<VisitorEntryRequest> visitorEntryRequests;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return role.getAuthorities();

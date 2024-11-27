@@ -1,13 +1,14 @@
 package com.VEMS.vems.entity;
 
 import com.VEMS.vems.auth.entity.user.User;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -25,11 +26,9 @@ public class VisitorEntryRequest {
 
     @ManyToOne
     @JoinColumn(name = "visitorId", nullable = false)
-    @JsonBackReference
     private Visitor visitor;
 
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
-    @JsonBackReference
     private User user;
 }

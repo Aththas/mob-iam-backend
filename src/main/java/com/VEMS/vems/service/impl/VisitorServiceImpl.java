@@ -5,12 +5,15 @@ import com.VEMS.vems.auth.service.impl.UserServiceImpl;
 import com.VEMS.vems.dto.requestDto.AddVisitorDto;
 import com.VEMS.vems.dto.requestDto.AddVisitorEntryRequestDto;
 import com.VEMS.vems.dto.requestDto.ParentVisitorDto;
+import com.VEMS.vems.dto.responseDto.ViewVisitorEntryByNicDto;
 import com.VEMS.vems.entity.Visitor;
+import com.VEMS.vems.entity.VisitorEntry;
 import com.VEMS.vems.entity.VisitorEntryRequest;
 import com.VEMS.vems.other.apiResponseDto.ApiResponse;
 import com.VEMS.vems.other.mapper.VisitorMapper;
 import com.VEMS.vems.other.pagination.PaginationConfig;
 import com.VEMS.vems.other.validator.ObjectValidator;
+import com.VEMS.vems.repository.VisitorEntryRepository;
 import com.VEMS.vems.repository.VisitorEntryRequestRepository;
 import com.VEMS.vems.repository.VisitorRepository;
 import com.VEMS.vems.service.VisitorService;
@@ -40,6 +43,7 @@ public class VisitorServiceImpl implements VisitorService {
     private final VisitorEntryRequestRepository visitorEntryRequestRepository;
     private final UserServiceImpl userServiceImpl;
     private final PaginationConfig paginationConfig;
+    private final VisitorEntryRepository visitorEntryRepository;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -314,11 +318,23 @@ public class VisitorServiceImpl implements VisitorService {
 
             VisitorEntryRequest validVisitorEntryRequest = optionalValidVisitorEntryRequest.get();
 
+            Optional<VisitorEntry> optionalVisitorEntry =
+                    visitorEntryRepository.findByDateAndVisitorEntryRequestId(LocalDate.now(), validVisitorEntryRequest.getId());
+            String inTime = null; String outTime = null;
+            String vehicleNo = null; Long passNo = null;
+            if(optionalVisitorEntry.isPresent()){
+                VisitorEntry visitorEntry = optionalVisitorEntry.get();
+                    inTime = visitorEntry.getInTime();
+                    outTime = visitorEntry.getOutTime();
+                    vehicleNo = visitorEntry.getVehicleNo();
+                    passNo = visitorEntry.getPassNo();
+            }
+
             String infoMsg = "Visitor " + validVisitorEntryRequest.getVisitor().getName() + " has access today";
             log.info(infoMsg);
             return new ResponseEntity<>(
                     new ApiResponse<>(true,
-                            visitorMapper.mapViewVisitorEntryRequest(validVisitorEntryRequest), infoMsg, null),
+                            visitorMapper.mapViewVisitorEntryByNic(validVisitorEntryRequest,inTime,outTime,vehicleNo,passNo), infoMsg, null),
                     HttpStatus.OK);
 
         }catch (Exception e){
