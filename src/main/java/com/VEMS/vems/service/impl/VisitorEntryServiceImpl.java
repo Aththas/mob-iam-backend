@@ -37,8 +37,8 @@ public class VisitorEntryServiceImpl implements VisitorEntryService {
     private final ObjectValidator<RecordOutTimeDto> recordOutTimeDtoObjectValidator;
     @Override
     public ResponseEntity<ApiResponse<?>> recordInTime(RecordInTimeDto recordInTimeDto) {
+        recordInTimeDtoObjectValidator.validate(recordInTimeDto);
         try{
-            recordInTimeDtoObjectValidator.validate(recordInTimeDto);
             Optional<VisitorEntryRequest> optionalVisitorEntryRequest
                     = visitorEntryRequestRepository.findById(recordInTimeDto.getVisitorEntryRequestId());
 
@@ -91,8 +91,8 @@ public class VisitorEntryServiceImpl implements VisitorEntryService {
 
     @Override
     public ResponseEntity<ApiResponse<?>> recordOutTime(RecordOutTimeDto recordOutTimeDto) {
+        recordOutTimeDtoObjectValidator.validate(recordOutTimeDto);
         try{
-            recordOutTimeDtoObjectValidator.validate(recordOutTimeDto);
             Optional<VisitorEntryRequest> optionalVisitorEntryRequest
                     = visitorEntryRequestRepository.findById(recordOutTimeDto.getVisitorEntryRequestId());
 
