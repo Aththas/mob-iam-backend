@@ -40,7 +40,7 @@ public class AuthMapper {
         tokenRepository.save(token);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void removeToken(Long userId){
         List<Token> tokenList = tokenRepository.findAllByUserId(userId);
         if(!tokenList.isEmpty()){
@@ -48,7 +48,7 @@ public class AuthMapper {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void removeTokenByToken(String token){
         Optional<Token> optionalToken = tokenRepository.findByToken(token);
         if(optionalToken.isPresent()){
