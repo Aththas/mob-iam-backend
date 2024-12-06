@@ -19,4 +19,17 @@ public interface VisitorEntryRequestRepository extends JpaRepository<VisitorEntr
     Page<VisitorEntryRequest> findAllByPermission(String permission, Pageable pageable);
     Page<VisitorEntryRequest> findAllByPermissionNot(String permission, Pageable pageable);
 
+    @Query("""
+            SELECT ver FROM VisitorEntryRequest ver
+            WHERE ver.user.id=:userId AND (
+            ver.visitor.verificationId LIKE %:keyword% OR
+            ver.visitor.name LIKE %:keyword% OR
+            ver.visitor.company LIKE %:keyword% OR
+            ver.department LIKE %:keyword% OR
+            ver.nightStay LIKE %:keyword% OR
+            ver.permission LIKE %:keyword%
+            )
+            """)
+    Page<VisitorEntryRequest> searchByKeywordAndUserId(String keyword, Long userId, Pageable pageable);
+
 }

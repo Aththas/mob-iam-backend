@@ -20,4 +20,6 @@ public interface VisitorService {
     ResponseEntity<ApiResponse<?>> viewNotPendingVisitorEntryRequest(int page, int size, String sortBy, boolean ascending);
 
     ResponseEntity<ApiResponse<?>> viewVisitorEntryByNic(String nic);
+
+    ResponseEntity<ApiResponse<?>> searchVisitorEntryRequestByUser(int page, int size, String sortBy, boolean ascending, String keyword);
 }

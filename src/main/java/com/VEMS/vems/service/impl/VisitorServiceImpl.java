@@ -344,4 +344,23 @@ public class VisitorServiceImpl implements VisitorService {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Override
+    public ResponseEntity<ApiResponse<?>> searchVisitorEntryRequestByUser(int page, int size, String sortBy, boolean ascending, String keyword) {
+        User user = userServiceImpl.getCurrentUser();
+        try{
+            Pageable pageable = paginationConfig.getPageable(page, size, sortBy, ascending);
+
+            Page<VisitorEntryRequest> searchList =
+                    visitorEntryRequestRepository.searchByKeywordAndUserId(keyword, user.getId(), pageable);
+
+            return displayVisitorEntryRequests(searchList);
+
+        }catch (Exception e){
+            log.error("search my visitor entry: " + e);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, null, "Server Error", "500"),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
