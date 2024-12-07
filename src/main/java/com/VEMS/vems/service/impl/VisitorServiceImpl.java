@@ -19,6 +19,8 @@ import com.VEMS.vems.repository.VisitorRepository;
 import com.VEMS.vems.service.VisitorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -47,6 +49,7 @@ public class VisitorServiceImpl implements VisitorService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "visitorEntryRequest", allEntries = true)
     public ResponseEntity<ApiResponse<?>> addVisitorRequest(ParentVisitorDto parentVisitorDto) {
         User user = userServiceImpl.getCurrentUser();
 
@@ -138,6 +141,8 @@ public class VisitorServiceImpl implements VisitorService {
     }
 
     @Override
+    @Cacheable(value = "visitorEntryRequest", key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getPrincipal().id" +
+            " + '_' + #page + '_' + #size + '_' + #sortBy + '_' + #ascending")
     public ResponseEntity<ApiResponse<?>> viewVisitorEntryRequestByUser(int page, int size, String sortBy, boolean ascending) {
         User user = userServiceImpl.getCurrentUser();
         try{
@@ -175,6 +180,7 @@ public class VisitorServiceImpl implements VisitorService {
     }
 
     @Override
+    @Cacheable(value = "visitorEntryRequest", key = "'pending_' + #page + '_' + #size + '_' + #sortBy + '_' + #ascending")
     public ResponseEntity<ApiResponse<?>> viewPendingVisitorEntryRequest(int page, int size, String sortBy, boolean ascending) {
         try{
             Pageable pageable = paginationConfig.getPageable(page, size, sortBy, ascending);
@@ -190,6 +196,7 @@ public class VisitorServiceImpl implements VisitorService {
     }
 
     @Override
+    @Cacheable(value = "visitorEntryRequest", key = "'accept_' + #page + '_' + #size + '_' + #sortBy + '_' + #ascending")
     public ResponseEntity<ApiResponse<?>> viewAcceptVisitorEntryRequest(int page, int size, String sortBy, boolean ascending) {
         try{
             Pageable pageable = paginationConfig.getPageable(page, size, sortBy, ascending);
@@ -211,6 +218,7 @@ public class VisitorServiceImpl implements VisitorService {
     }
 
     @Override
+    @Cacheable(value = "visitorEntryRequest", key = "'NotPending_' + #page + '_' + #size + '_' + #sortBy + '_' + #ascending")
     public ResponseEntity<ApiResponse<?>> viewNotPendingVisitorEntryRequest(int page, int size, String sortBy, boolean ascending) {
         try{
             Pageable pageable = paginationConfig.getPageable(page, size, sortBy, ascending);
@@ -232,6 +240,7 @@ public class VisitorServiceImpl implements VisitorService {
     }
 
     @Override
+    @CacheEvict(value = "visitorEntryRequest", allEntries = true)
     public ResponseEntity<ApiResponse<?>> acceptVisitorRequestPermission(Long id) {
         try{
             return updateVisitorRequestPermission("accept",id);
@@ -244,6 +253,7 @@ public class VisitorServiceImpl implements VisitorService {
     }
 
     @Override
+    @CacheEvict(value = "visitorEntryRequest", allEntries = true)
     public ResponseEntity<ApiResponse<?>> rejectVisitorRequestPermission(Long id) {
         try{
             return updateVisitorRequestPermission("reject",id);
@@ -346,6 +356,8 @@ public class VisitorServiceImpl implements VisitorService {
     }
 
     @Override
+    @Cacheable(value = "visitorEntryRequest", key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getPrincipal().id" +
+            " + '_' + #page + '_' + #size + '_' + #sortBy + '_' + #ascending + '_' + #keyword")
     public ResponseEntity<ApiResponse<?>> searchVisitorEntryRequestByUser(int page, int size, String sortBy, boolean ascending, String keyword) {
         User user = userServiceImpl.getCurrentUser();
         try{
