@@ -70,6 +70,13 @@ public class VisitorController {
         return visitorService.viewNotPendingVisitorEntryRequest(page, size, sortBy, ascending);
     }
 
+    @GetMapping("/searchNotPendingVisitorEntryRequest")
+    public ResponseEntity<ApiResponse<?>> searchNotPendingVisitorEntryRequest(@RequestParam int page, @RequestParam int size,
+                                                                           @RequestParam String sortBy, @RequestParam boolean ascending,
+                                                                           @RequestParam String keyword){
+        return visitorService.searchNotPendingVisitorEntryRequest(page, size, sortBy, ascending, keyword);
+    }
+
     @PostMapping("/acceptVisitorRequestPermission")
     public ResponseEntity<ApiResponse<?>> acceptVisitorRequestPermission(@RequestParam Long id){
         return visitorService.acceptVisitorRequestPermission(id);

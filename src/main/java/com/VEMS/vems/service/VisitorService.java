@@ -26,4 +26,6 @@ public interface VisitorService {
     ResponseEntity<ApiResponse<?>> searchAcceptVisitorEntryRequest(int page, int size, String sortBy, boolean ascending, String keyword);
 
     ResponseEntity<ApiResponse<?>> searchPendingVisitorEntryRequest(int page, int size, String sortBy, boolean ascending, String keyword);
+
+    ResponseEntity<ApiResponse<?>> searchNotPendingVisitorEntryRequest(int page, int size, String sortBy, boolean ascending, String keyword);
 }

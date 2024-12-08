@@ -47,4 +47,19 @@ public interface VisitorEntryRequestRepository extends JpaRepository<VisitorEntr
             """)
     Page<VisitorEntryRequest> searchByKeywordAndPermission(String keyword, String permission, Pageable pageable);
 
+    @Query("""
+            SELECT ver FROM VisitorEntryRequest ver
+            WHERE ver.permission!=:permission AND (
+            ver.visitor.verificationId LIKE %:keyword% OR
+            ver.visitor.name LIKE %:keyword% OR
+            ver.visitor.company LIKE %:keyword% OR
+            ver.department LIKE %:keyword% OR
+            ver.nightStay LIKE %:keyword% OR
+            ver.user.firstName LIKE %:keyword% OR
+            ver.user.lastName LIKE %:keyword% OR
+            ver.user.designation LIKE %:keyword%
+            )
+            """)
+    Page<VisitorEntryRequest> searchByKeywordAndPermissionNot(String keyword, String permission, Pageable pageable);
+
 }

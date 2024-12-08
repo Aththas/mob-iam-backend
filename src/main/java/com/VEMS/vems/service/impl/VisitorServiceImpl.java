@@ -415,4 +415,27 @@ public class VisitorServiceImpl implements VisitorService {
 
         return displayVisitorEntryRequests(visitorEntryRequestList);
     }
+
+    @Override
+    @Cacheable(value = "visitorEntryRequest", key = "'NotPending_' + #page + '_' + #size + '_' + #sortBy + '_' + #ascending + '_' + #keyword")
+    public ResponseEntity<ApiResponse<?>> searchNotPendingVisitorEntryRequest(int page, int size, String sortBy, boolean ascending, String keyword) {
+        try{
+            Pageable pageable = paginationConfig.getPageable(page, size, sortBy, ascending);
+
+            return searchVisitorEntryRequestByPermissionNot("pending", keyword, pageable);
+
+        }catch (Exception e){
+            log.error("search not pending visitor entry: " + e);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, null, "Server Error", "500"),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private ResponseEntity<ApiResponse<?>> searchVisitorEntryRequestByPermissionNot(String permission, String keyword, Pageable pageable) {
+        Page<VisitorEntryRequest> visitorEntryRequestList =
+                visitorEntryRequestRepository.searchByKeywordAndPermissionNot(keyword, permission, pageable);
+
+        return displayVisitorEntryRequests(visitorEntryRequestList);
+    }
 }
