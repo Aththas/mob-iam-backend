@@ -42,6 +42,13 @@ public class VisitorController {
         return visitorService.viewPendingVisitorEntryRequest(page, size, sortBy, ascending);
     }
 
+    @GetMapping("/searchPendingVisitorEntryRequest")
+    public ResponseEntity<ApiResponse<?>> searchPendingVisitorEntryRequest(@RequestParam int page, @RequestParam int size,
+                                                                          @RequestParam String sortBy, @RequestParam boolean ascending,
+                                                                          @RequestParam String keyword){
+        return visitorService.searchPendingVisitorEntryRequest(page, size, sortBy, ascending, keyword);
+    }
+
     @GetMapping("/viewAcceptVisitorEntryRequest")
     public ResponseEntity<ApiResponse<?>> viewAcceptVisitorEntryRequest(@RequestParam int page, @RequestParam int size,
                                                                          @RequestParam String sortBy,
