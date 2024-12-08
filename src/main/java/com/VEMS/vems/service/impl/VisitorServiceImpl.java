@@ -5,7 +5,6 @@ import com.VEMS.vems.auth.service.impl.UserServiceImpl;
 import com.VEMS.vems.dto.requestDto.AddVisitorDto;
 import com.VEMS.vems.dto.requestDto.AddVisitorEntryRequestDto;
 import com.VEMS.vems.dto.requestDto.ParentVisitorDto;
-import com.VEMS.vems.dto.responseDto.ViewVisitorEntryByNicDto;
 import com.VEMS.vems.entity.Visitor;
 import com.VEMS.vems.entity.VisitorEntry;
 import com.VEMS.vems.entity.VisitorEntryRequest;
@@ -330,8 +329,10 @@ public class VisitorServiceImpl implements VisitorService {
 
             Optional<VisitorEntry> optionalVisitorEntry =
                     visitorEntryRepository.findByDateAndVisitorEntryRequestId(LocalDate.now(), validVisitorEntryRequest.getId());
-            String inTime = null; String outTime = null;
-            String vehicleNo = null; Long passNo = null;
+            String inTime = null;
+            String outTime = null;
+            String vehicleNo = null;
+            Long passNo = null;
             if(optionalVisitorEntry.isPresent()){
                 VisitorEntry visitorEntry = optionalVisitorEntry.get();
                     inTime = visitorEntry.getInTime();
@@ -377,6 +378,7 @@ public class VisitorServiceImpl implements VisitorService {
     }
 
     @Override
+    @Cacheable(value = "visitorEntryRequest", key = "'accept_' + #page + '_' + #size + '_' + #sortBy + '_' + #ascending + '_' + #keyword")
     public ResponseEntity<ApiResponse<?>> searchAcceptVisitorEntryRequest(int page, int size, String sortBy, boolean ascending, String keyword) {
         try{
             Pageable pageable = paginationConfig.getPageable(page, size, sortBy, ascending);
@@ -392,6 +394,7 @@ public class VisitorServiceImpl implements VisitorService {
     }
 
     @Override
+    @Cacheable(value = "visitorEntryRequest", key = "'pending_' + #page + '_' + #size + '_' + #sortBy + '_' + #ascending + '_' + #keyword")
     public ResponseEntity<ApiResponse<?>> searchPendingVisitorEntryRequest(int page, int size, String sortBy, boolean ascending, String keyword) {
         try{
             Pageable pageable = paginationConfig.getPageable(page, size, sortBy, ascending);
