@@ -55,6 +55,7 @@ public interface VisitorEntryRequestRepository extends JpaRepository<VisitorEntr
             ver.visitor.company LIKE %:keyword% OR
             ver.department LIKE %:keyword% OR
             ver.nightStay LIKE %:keyword% OR
+            ver.permission LIKE %:keyword% OR
             ver.user.firstName LIKE %:keyword% OR
             ver.user.lastName LIKE %:keyword% OR
             ver.user.designation LIKE %:keyword%
