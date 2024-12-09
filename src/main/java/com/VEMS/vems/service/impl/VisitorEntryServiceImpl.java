@@ -14,6 +14,8 @@ import com.VEMS.vems.repository.VisitorEntryRequestRepository;
 import com.VEMS.vems.service.VisitorEntryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -36,6 +38,7 @@ public class VisitorEntryServiceImpl implements VisitorEntryService {
     private final ObjectValidator<RecordInTimeDto> recordInTimeDtoObjectValidator;
     private final ObjectValidator<RecordOutTimeDto> recordOutTimeDtoObjectValidator;
     @Override
+    @CacheEvict(value = "visitorEntries", allEntries = true)
     public ResponseEntity<ApiResponse<?>> recordInTime(RecordInTimeDto recordInTimeDto) {
         recordInTimeDtoObjectValidator.validate(recordInTimeDto);
         try{
@@ -90,6 +93,7 @@ public class VisitorEntryServiceImpl implements VisitorEntryService {
     }
 
     @Override
+    @CacheEvict(value = "visitorEntries", allEntries = true)
     public ResponseEntity<ApiResponse<?>> recordOutTime(RecordOutTimeDto recordOutTimeDto) {
         recordOutTimeDtoObjectValidator.validate(recordOutTimeDto);
         try{
@@ -151,6 +155,7 @@ public class VisitorEntryServiceImpl implements VisitorEntryService {
     }
 
     @Override
+    @Cacheable(value = "visitorEntries", key = "#page + '-' + #size + '-' + #sortBy + '-' + #ascending + '-' + #fromDate + '-' + #toDate")
     public ResponseEntity<ApiResponse<?>> viewVisitorEntries(int page, int size, String sortBy, boolean ascending, String fromDate, String toDate) {
         try{
             LocalDate startDate = LocalDate.parse(fromDate);
@@ -161,6 +166,27 @@ public class VisitorEntryServiceImpl implements VisitorEntryService {
                     visitorEntryRepository.findAllByDateBetween(startDate, endDate, pageable);
 
             return displayVisitorEntries(visitorEntriesPerPage);
+
+        }catch (Exception e){
+            log.error("View Visitor Entries: " + e);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, null, "Server Error", "500"),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    @Cacheable(value = "visitorEntries", key = "#page + '-' + #size + '-' + #sortBy + '-' + #ascending + '-' + #fromDate + '-' + #toDate + '_' + #keyword")
+    public ResponseEntity<ApiResponse<?>> searchVisitorEntries(int page, int size, String sortBy, boolean ascending, String fromDate, String toDate, String keyword) {
+        try{
+            LocalDate startDate = LocalDate.parse(fromDate);
+            LocalDate endDate = LocalDate.parse(toDate);
+            Pageable pageable = paginationConfig.getPageable(page, size, sortBy, ascending);
+
+            Page<VisitorEntry> visitorEntries =
+                    visitorEntryRepository.searchAllByDateBetweenAndKeyword(keyword, startDate, endDate, pageable);
+
+            return displayVisitorEntries(visitorEntries);
 
         }catch (Exception e){
             log.error("View Visitor Entries: " + e);
@@ -187,5 +213,4 @@ public class VisitorEntryServiceImpl implements VisitorEntryService {
                         Long.toString(count), null),
                 HttpStatus.OK);
     }
-
 }

@@ -34,5 +34,13 @@ public class VisitorEntryController {
                                                              @RequestParam String fromDate,
                                                              @RequestParam String toDate){
         return visitorEntryService.viewVisitorEntries(page, size, sortBy, ascending, fromDate, toDate);
+
+    }@GetMapping("/searchVisitorEntries")
+    public ResponseEntity<ApiResponse<?>> searchVisitorEntries(@RequestParam int page, @RequestParam int size,
+                                                               @RequestParam String sortBy,
+                                                               @RequestParam boolean ascending,
+                                                               @RequestParam String fromDate,
+                                                               @RequestParam String toDate, @RequestParam String keyword){
+        return visitorEntryService.searchVisitorEntries(page, size, sortBy, ascending, fromDate, toDate, keyword);
     }
 }

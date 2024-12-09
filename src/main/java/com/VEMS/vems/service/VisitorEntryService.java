@@ -13,4 +13,6 @@ public interface VisitorEntryService {
     ResponseEntity<ApiResponse<?>> recordOutTime(RecordOutTimeDto recordOutTimeDto);
 
     ResponseEntity<ApiResponse<?>> viewVisitorEntries(int page, int size, String sortBy, boolean ascending, String fromDate, String toDate);
+
+    ResponseEntity<ApiResponse<?>> searchVisitorEntries(int page, int size, String sortBy, boolean ascending, String fromDate, String toDate, String keyword);
 }
