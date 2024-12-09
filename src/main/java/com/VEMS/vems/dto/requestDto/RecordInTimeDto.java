@@ -8,8 +8,6 @@ import lombok.Data;
 @Data
 public class RecordInTimeDto {
 
-    @NotEmpty(message = "Vehicle No is Mandatory")
-    @NotNull(message = "Vehicle No is Mandatory")
     private String vehicleNo;
 
     @Positive(message = "Invalid Pass No")
