@@ -9,4 +9,6 @@ public interface InternEntryService {
     ResponseEntity<ApiResponse<?>> recordInTime(InternRecordInTimeDto recordInTimeDto);
 
     ResponseEntity<ApiResponse<?>> recordOutTime(InternRecordOutTimeDto recordOutTimeDto);
+
+    ResponseEntity<ApiResponse<?>> viewInternEntries(int page, int size, String sortBy, boolean ascending, String fromDate, String toDate);
 }

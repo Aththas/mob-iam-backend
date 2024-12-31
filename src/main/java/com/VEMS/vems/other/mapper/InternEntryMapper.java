@@ -1,6 +1,7 @@
 package com.VEMS.vems.other.mapper;
 
 import com.VEMS.vems.dto.requestDto.InternRecordInTimeDto;
+import com.VEMS.vems.dto.responseDto.ViewInternEntryDto;
 import com.VEMS.vems.entity.InternEntry;
 import com.VEMS.vems.other.timeFormatConfig.TimeFormatter;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +24,18 @@ public class InternEntryMapper {
         internEntry.setPassNo(recordInTimeDto.getPassNo());
         internEntry.setVehicleNo(recordInTimeDto.getVehicleNo());
         return internEntry;
+    }
+
+    public ViewInternEntryDto mapViewInternEntry(InternEntry internEntry) {
+        ViewInternEntryDto viewInternEntryDto = new ViewInternEntryDto();
+        viewInternEntryDto.setDate(internEntry.getDate());
+        viewInternEntryDto.setInTime(internEntry.getInTime());
+        viewInternEntryDto.setOutTime(internEntry.getOutTime());
+        viewInternEntryDto.setVehicleNo(internEntry.getVehicleNo());
+        viewInternEntryDto.setPassNo(internEntry.getPassNo());
+
+        //get response from intern verification API
+
+        return viewInternEntryDto;
     }
 }

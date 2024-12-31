@@ -23,4 +23,13 @@ public class InternEntryController {
     public ResponseEntity<ApiResponse<?>> recordOutTime(@RequestBody InternRecordOutTimeDto recordOutTimeDto){
         return internEntryService.recordOutTime(recordOutTimeDto);
     }
+
+    @GetMapping("/viewInternEntries")
+    public ResponseEntity<ApiResponse<?>> viewInternEntries(@RequestParam int page, @RequestParam int size,
+                                                             @RequestParam String sortBy,
+                                                             @RequestParam boolean ascending,
+                                                             @RequestParam String fromDate,
+                                                             @RequestParam String toDate){
+        return internEntryService.viewInternEntries(page, size, sortBy, ascending, fromDate, toDate);
+    }
 }
