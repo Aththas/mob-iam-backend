@@ -34,4 +34,12 @@ public class GlobalExceptionHandler {
                 new ApiResponse<>(false, null, "JSON Parse Error", "400"),
                 HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(NoAccess.class)
+    public ResponseEntity<ApiResponse<?>> handleNoAccess(NoAccess e){
+        log.info(e.getErrorMsg());
+        return new ResponseEntity<>(
+                new ApiResponse<>(false, null, e.getErrorMsg(), "401"),
+                HttpStatus.BAD_REQUEST);
+    }
 }
