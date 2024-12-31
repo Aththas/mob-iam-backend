@@ -1,5 +1,6 @@
 package com.VEMS.vems.dto.requestDto;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
@@ -12,7 +13,7 @@ public class InternRecordInTimeDto {
     @NotNull(message = "Invalid Pass No")
     private Long passNo;
 
-    @Positive(message = "Invalid Intern Username")
+    @NotEmpty(message = "Invalid Intern Username")
     @NotNull(message = "Invalid Intern Username")
     private String intern;
 }

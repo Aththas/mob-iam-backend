@@ -9,6 +9,7 @@ public class InternDetailsDto {
     private String job;
     private String department;
     private String manager;
+    private String intern;
 
     private String vehicleNo;
     private String inTime;

@@ -53,7 +53,7 @@ public class InternServiceImpl implements InternService {
     }
 
     private InternDetailsDto getInternDetailsByUsername(String username){
-
+//            username goes through api verification, if failed throw no access exception
         if(!username.equalsIgnoreCase("aththas")){
             throw new NoAccess("Access Denied");
         }
@@ -64,6 +64,7 @@ public class InternServiceImpl implements InternService {
         internDetailsDto.setJob("Information Security");
         internDetailsDto.setDepartment("Information Systems");
         internDetailsDto.setManager("Musthalie");
+        internDetailsDto.setIntern(username);
         internDetailsDto.setVehicleNo(null);
         internDetailsDto.setInTime(null);
         internDetailsDto.setOutTime(null);
