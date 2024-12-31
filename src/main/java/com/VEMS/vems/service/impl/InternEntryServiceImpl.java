@@ -15,6 +15,8 @@ import com.VEMS.vems.repository.InternEntryRepository;
 import com.VEMS.vems.service.InternEntryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -37,6 +39,7 @@ public class InternEntryServiceImpl implements InternEntryService {
     private final PaginationConfig paginationConfig;
     private final InternApi internApi;
     @Override
+    @CacheEvict(value = "internEntries", allEntries = true)
     public ResponseEntity<ApiResponse<?>> recordInTime(InternRecordInTimeDto recordInTimeDto) {
         recordInTimeDtoObjectValidator.validate(recordInTimeDto);
         try{
@@ -73,6 +76,7 @@ public class InternEntryServiceImpl implements InternEntryService {
     }
 
     @Override
+    @CacheEvict(value = "internEntries", allEntries = true)
     public ResponseEntity<ApiResponse<?>> recordOutTime(InternRecordOutTimeDto recordOutTimeDto) {
         recordOutTimeDtoObjectValidator.validate(recordOutTimeDto);
         try{
@@ -115,6 +119,7 @@ public class InternEntryServiceImpl implements InternEntryService {
     }
 
     @Override
+    @Cacheable(value = "internEntries", key = "#page + '-' + #size + '-' + #sortBy + '-' + #ascending + '-' + #fromDate + '-' + #toDate")
     public ResponseEntity<ApiResponse<?>> viewInternEntries(int page, int size, String sortBy, boolean ascending, String fromDate, String toDate) {
         try{
             LocalDate startDate = LocalDate.parse(fromDate);
@@ -135,6 +140,7 @@ public class InternEntryServiceImpl implements InternEntryService {
     }
 
     @Override
+    @Cacheable(value = "internEntries", key = "#page + '-' + #size + '-' + #sortBy + '-' + #ascending + '-' + #fromDate + '-' + #toDate + '_' + #keyword")
     public ResponseEntity<ApiResponse<?>> searchInternEntries(int page, int size, String sortBy, boolean ascending, String fromDate, String toDate, String keyword) {
         try{
             LocalDate startDate = LocalDate.parse(fromDate);
