@@ -32,4 +32,13 @@ public class InternEntryController {
                                                              @RequestParam String toDate){
         return internEntryService.viewInternEntries(page, size, sortBy, ascending, fromDate, toDate);
     }
+
+    @GetMapping("/searchInternEntries")
+    public ResponseEntity<ApiResponse<?>> searchInternEntries(@RequestParam int page, @RequestParam int size,
+                                                               @RequestParam String sortBy,
+                                                               @RequestParam boolean ascending,
+                                                               @RequestParam String fromDate,
+                                                               @RequestParam String toDate, @RequestParam String keyword){
+        return internEntryService.searchInternEntries(page, size, sortBy, ascending, fromDate, toDate, keyword);
+    }
 }

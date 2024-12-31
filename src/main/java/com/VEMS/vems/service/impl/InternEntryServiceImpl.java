@@ -3,6 +3,7 @@ package com.VEMS.vems.service.impl;
 import com.VEMS.vems.dto.requestDto.InternRecordInTimeDto;
 import com.VEMS.vems.dto.requestDto.InternRecordOutTimeDto;
 import com.VEMS.vems.entity.InternEntry;
+import com.VEMS.vems.entity.VisitorEntry;
 import com.VEMS.vems.other.apiResponseDto.ApiResponse;
 import com.VEMS.vems.other.exception.NoAccess;
 import com.VEMS.vems.other.internApi.InternApi;
@@ -127,6 +128,26 @@ public class InternEntryServiceImpl implements InternEntryService {
 
         }catch (Exception e){
             log.error("View Intern Entries: " + e);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, null, "Server Error", "500"),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<?>> searchInternEntries(int page, int size, String sortBy, boolean ascending, String fromDate, String toDate, String keyword) {
+        try{
+            LocalDate startDate = LocalDate.parse(fromDate);
+            LocalDate endDate = LocalDate.parse(toDate);
+            Pageable pageable = paginationConfig.getPageable(page, size, sortBy, ascending);
+
+            Page<InternEntry> internEntries =
+                    internEntryRepository.searchAllByDateBetweenAndKeyword(keyword, startDate, endDate, pageable);
+
+            return displayInternEntries(internEntries);
+
+        }catch (Exception e){
+            log.error("View Visitor Entries: " + e);
             return new ResponseEntity<>(
                     new ApiResponse<>(false, null, "Server Error", "500"),
                     HttpStatus.INTERNAL_SERVER_ERROR);
