@@ -1,6 +1,9 @@
 package com.VEMS.vems.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +14,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class VisitorEntry {
+public class InternEntry {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,9 +23,5 @@ public class VisitorEntry {
     private String outTime;
     private String vehicleNo;
     private Long passNo;
-
-    @ManyToOne
-    @JoinColumn(name = "requestId", nullable = false)
-    private VisitorEntryRequest visitorEntryRequest;
-
+    private String intern;
 }
